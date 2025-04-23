@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
 const scheduleSchema = new mongoose.Schema({
-  matatu: {
+  matatuId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Matatu', // Reference to Matatu model
+    ref: 'Matatu',
     required: true,
   },
-  route: {
+  routeId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Route', // Reference to Route model
+    ref: 'Route',
     required: true,
   },
   departureTime: {
