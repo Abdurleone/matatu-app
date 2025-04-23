@@ -3,7 +3,16 @@ const Schedule = require('../models/Schedule');
 // Create Schedule
 exports.createSchedule = async (req, res) => {
   try {
-    const newSchedule = new Schedule(req.body);
+    const { matatuId, routeId, departureTime, destination, isActive } = req.body;
+
+    const newSchedule = new Schedule({
+      matatu: matatuId,
+      route: routeId,
+      departureTime,
+      destination,
+      isActive
+    });
+
     await newSchedule.save();
     res.status(201).json(newSchedule);
   } catch (err) {
@@ -14,7 +23,7 @@ exports.createSchedule = async (req, res) => {
 // Get All Schedules
 exports.getSchedules = async (req, res) => {
   try {
-    const schedules = await Schedule.find().populate('matatu');
+    const schedules = await Schedule.find().populate('matatu route');
     res.json(schedules);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -24,7 +33,7 @@ exports.getSchedules = async (req, res) => {
 // Get Schedule by ID
 exports.getScheduleById = async (req, res) => {
   try {
-    const schedule = await Schedule.findById(req.params.id).populate('matatu');
+    const schedule = await Schedule.findById(req.params.id).populate('matatu route');
     if (!schedule) return res.status(404).json({ error: 'Schedule not found' });
     res.json(schedule);
   } catch (err) {
@@ -35,7 +44,16 @@ exports.getScheduleById = async (req, res) => {
 // Update Schedule by ID
 exports.updateScheduleById = async (req, res) => {
   try {
-    const updatedSchedule = await Schedule.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const { matatuId, routeId, departureTime, destination, isActive } = req.body;
+
+    const updatedSchedule = await Schedule.findByIdAndUpdate(req.params.id, {
+      matatu: matatuId,
+      route: routeId,
+      departureTime,
+      destination,
+      isActive
+    }, { new: true });
+
     if (!updatedSchedule) return res.status(404).json({ error: 'Schedule not found' });
     res.json(updatedSchedule);
   } catch (err) {
