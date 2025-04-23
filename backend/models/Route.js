@@ -1,38 +1,13 @@
 const mongoose = require('mongoose');
 
-// Sub-schema for stops
 const stopSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  timeFromStart: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
+  name: { type: String, required: true },
+  timeFromStart: { type: Number, required: true },
 });
 
-// Main route schema
 const routeSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  stops: {
-    type: [stopSchema],
-    validate: [arrayLimit, 'A route must have at least two stops'],
-  },
-}, {
-  timestamps: true
+  name: { type: String, required: true },
+  stops: [stopSchema],
 });
-
-// Custom validator for stop length
-function arrayLimit(val) {
-  return val.length >= 2;
-}
 
 module.exports = mongoose.model('Route', routeSchema);
