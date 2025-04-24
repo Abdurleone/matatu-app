@@ -1,9 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext.js"; // Adjust the import path if necessary
-import Navbar from "./components/Navbar"; // Adjust the import path if necessary
-import Home from "./pages/Home"; // Adjust the import path if necessary
-import MatatuDetailPage from "./pages/MatatuDetailPage"; // Adjust the import path if necessary
+import { AuthProvider } from "./context/AuthContext.js";
+import Navbar from "./components/Navbar.jsx";
+import Footer from "./components/Footer.jsx";
+import Home from "./pages/Home.jsx";
+import MatatuDetailPage from "./pages/MatatuDetailPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/matatu/:id" element={<MatatuDetailPage />} />
         </Routes>
+        <Footer />
       </AuthProvider>
     </Router>
   );
