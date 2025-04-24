@@ -1,58 +1,68 @@
-// controllers/userController.js
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// Register a new user (driver, conductor, or passenger)
+// Register one or more users
 const registerUser = async (req, res) => {
   try {
-    const { username, email, password, role, membershipNo } = req.body;
+    const users = Array.isArray(req.body) ? req.body : [req.body];
+    const createdUsers = [];
+    const skippedUsers = [];
 
-    // Validate required fields based on role
-    if (role === 'passenger' && (!username || !email)) {
-      return res.status(400).json({ message: 'Username and email are required for passengers' });
-    }
-    if ((role === 'driver' || role === 'conductor') && !membershipNo) {
-      return res.status(400).json({ message: 'Membership number is required for drivers and conductors' });
-    }
+    for (const userData of users) {
+      const { username, email, password, role, membershipNo } = userData;
 
-    // Check if a user already exists with the same email (for passengers) or membershipNo (for driver/conductor)
-    const existingUser = await User.findOne({
-      $or: [
-        { email },
-        { membershipNo }
-      ],
-    });
+      // Validate required fields based on role
+      if (role === 'passenger' && (!username || !email)) {
+        skippedUsers.push({ reason: 'Missing username/email for passenger', data: userData });
+        continue;
+      }
+      if ((role === 'driver' || role === 'conductor') && !membershipNo) {
+        skippedUsers.push({ reason: 'Missing membership number for driver/conductor', data: userData });
+        continue;
+      }
 
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
+      // Check if a user already exists
+      const existingUser = await User.findOne({
+        $or: [
+          email ? { email } : null,
+          membershipNo ? { membershipNo } : null
+        ].filter(Boolean),
+      });
 
-    // Create a new user
-    const newUser = new User({
-      username,
-      email,
-      password,
-      role,
-      membershipNo,
-    });
+      if (existingUser) {
+        skippedUsers.push({ reason: 'User already exists', data: userData });
+        continue;
+      }
 
-    // Hash the password
-    newUser.password = await bcrypt.hash(password, 10);
+      // Hash password and create user
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({
+        username,
+        email,
+        password: hashedPassword,
+        role,
+        membershipNo,
+      });
 
-    // Save user to the database
-    await newUser.save();
+      await newUser.save();
 
-    res.status(201).json({
-      message: 'User registered successfully',
-      user: {
+      createdUsers.push({
         username: newUser.username,
         email: newUser.email,
         role: newUser.role,
-      }
+        membershipNo: newUser.membershipNo,
+      });
+    }
+
+    res.status(201).json({
+      message: `${createdUsers.length} user(s) registered successfully.`,
+      createdUsers,
+      skippedUsers,
     });
+
   } catch (error) {
-    console.error(error);
+    console.error("Registration error:", error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -62,7 +72,6 @@ const loginUser = async (req, res) => {
   try {
     const { membershipNo, email, password } = req.body;
 
-    // Check if account is locked due to too many failed login attempts
     const user = await User.findOne({
       $or: [
         { email },
@@ -74,23 +83,18 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    if (user.isAccountLocked()) {
+    if (user.isAccountLocked && user.isAccountLocked()) {
       return res.status(400).json({ message: 'Account locked due to multiple failed login attempts. Please reset your password.' });
     }
 
-    // Compare password
     const isPasswordMatch = await user.comparePassword(password);
-
     if (!isPasswordMatch) {
-      // Increment failed login attempts
       await user.incrementLoginAttempts();
       return res.status(400).json({ message: 'Invalid password' });
     }
 
-    // Reset login attempts after successful login
     await user.resetLoginAttempts();
 
-    // Generate JWT token for authenticated user
     const token = jwt.sign({ id: user._id, role: user.role }, 'your_jwt_secret', { expiresIn: '1h' });
 
     res.status(200).json({
@@ -102,13 +106,14 @@ const loginUser = async (req, res) => {
         role: user.role,
       }
     });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Password reset (to be triggered when account is locked)
+// Password reset
 const resetPassword = async (req, res) => {
   try {
     const { email, membershipNo, newPassword } = req.body;
@@ -124,23 +129,21 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: 'User not found' });
     }
 
-    // Reset account lock and failed attempts
     user.accountLocked = false;
     user.failedLoginAttempts = 0;
     user.lockUntil = null;
 
-    // Hash the new password and update
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
     res.status(200).json({ message: 'Password reset successful' });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-// Export the controller functions
 module.exports = {
   registerUser,
   loginUser,
