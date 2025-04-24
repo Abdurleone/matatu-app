@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const tripHistorySchema = new mongoose.Schema({
     matatu: {
       type: mongoose.Schema.Types.ObjectId,
