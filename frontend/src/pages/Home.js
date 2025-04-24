@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getMatatus } from '../../services/matatuService.js';
-import MatatuList from '../../components/MatatuList.js';
+import { getMatatus } from '../services/matatuService.js';
+import MatatuList from '../components/MatatuList.js';
 
 const Home = () => {
   const [matatus, setMatatus] = useState([]);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getMatatuById, bookSeat } from '../../services/matatuService';
+import { getMatatuById, bookSeat } from '../services/matatuService';
 
 const MatatuDetailPage = ({ match }) => {
   const { id } = match.params;
