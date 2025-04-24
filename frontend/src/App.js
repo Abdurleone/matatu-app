@@ -1,9 +1,9 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthContextProvider } from './context/AuthContext';
-import Navbar from './components/Navbar.js';
-import Home from './pages/Home.js';
-import MatatuDetailPage from './pages/MatatuDetailPage.js';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthContextProvider } from "./context/AuthContext.js"; // Adjust the import path if necessary
+import Navbar from "./components/Navbar"; // Adjust the import path if necessary
+import Home from "./pages/Home"; // Adjust the import path if necessary
+import MatatuDetailPage from "./pages/MatatuDetailPage"; // Adjust the import path if necessary
 
 function App() {
   return (
@@ -20,4 +20,3 @@ function App() {
 }
 
 export default App;
-
