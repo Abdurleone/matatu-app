@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import Home from './pages/Home';
-import MatatuDetailPage from './pages/MatatuDetailPage';
+import Home from './pages/Home.js';
+import MatatuDetailPage from './pages/MatatuDetailPage.js';
 
 const App = () => {
   return (
