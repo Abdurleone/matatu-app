@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
-const matatuSchema = new mongoose.Schema({
+// Check if the model is already compiled
+const Matatu = mongoose.models.Matatu || mongoose.model('Matatu', new mongoose.Schema({
   registrationNumber: {
     type: String,
     required: true,
@@ -24,9 +25,9 @@ const matatuSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true
-});
+}));
 
-module.exports = mongoose.model('Matatu', matatuSchema);
+module.exports = Matatu;
 
 router.put('/book-seat/:id', async (req, res) => {
   try {
