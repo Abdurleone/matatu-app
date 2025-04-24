@@ -5,10 +5,17 @@ const router = express.Router();
 // Create Matatu
 router.post('/', async (req, res) => {
   try {
+    const { capacity, ...rest } = req.body;
+    if (!capacity || isNaN(capacity) || capacity <= 0) {
+      return res.status(400).json({ error: 'Invalid capacity value' });
+    }
+
     const data = {
-      ...req.body,
-      seatsAvailable: req.body.capacity, // Auto-set seatsAvailable to capacity
+      ...rest,
+      capacity, // Set the capacity
+      seatsAvailable: capacity, // Auto-set seatsAvailable to capacity
     };
+    
     const newMatatu = await Matatu.create(data);
     res.status(201).json(newMatatu);
   } catch (err) {
@@ -50,7 +57,8 @@ router.put('/:id', async (req, res) => {
 // Delete Matatu
 router.delete('/:id', async (req, res) => {
   try {
-    await Matatu.findByIdAndDelete(req.params.id);
+    const matatu = await Matatu.findByIdAndDelete(req.params.id);
+    if (!matatu) return res.status(404).json({ error: 'Matatu not found' });
     res.json({ message: 'Matatu deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
