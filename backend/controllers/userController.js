@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-const Driver = require('../models/Driver');
-const Conductor = require('../models/Conductor');
+// const Driver = require('../models/Driver');
+// const Conductor = require('../models/Conductor');
 
 const registerUser = async (userData) => {
   const { membershipNumber, password, role } = userData;
