@@ -1,4 +1,3 @@
-// controllers/userController.js
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -14,6 +13,9 @@ const registerUser = async (req, res) => {
     }
     if ((role === 'driver' || role === 'conductor') && !membershipNo) {
       return res.status(400).json({ message: 'Membership number is required for drivers and conductors' });
+    }
+    if (!password || typeof password !== 'string') {
+      return res.status(400).json({ message: 'Password is required and should be a valid string' });
     }
 
     // Check if a user already exists with the same email (for passengers) or membershipNo (for driver/conductor)
