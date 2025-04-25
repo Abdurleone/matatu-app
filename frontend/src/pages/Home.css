@@ -1,0 +1,48 @@
+/* filepath: c:\Users\AbdulKadir Sebit\OneDrive - DR. KALEBI LABS (DKL) LTD\Desktop\Matatu\matatu-app\frontend\src\pages\Home.css */
+
+/* Full-page background */
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Push footer to the bottom */
+  align-items: center;
+  background-color: black;
+  color: white;
+  padding: 20px;
+}
+
+/* Logo styling */
+.home-logo {
+  max-width: 400px; /* Increased size */
+  width: 100%;
+  height: auto;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+  filter: brightness(0.8) contrast(1.2);
+}
+
+.home-logo:hover {
+  transform: scale(1.1);
+}
+
+/* Footer styling */
+.home-footer {
+  width: 100%;
+  padding: 16px;
+  background-color: #1a1a1a;
+  text-align: center;
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+.home-footer a {
+  color: #b3b3b3;
+  text-decoration: none;
+  margin: 0 8px;
+  transition: color 0.3s ease-in-out;
+}
+
+.home-footer a:hover {
+  color: white;
+}

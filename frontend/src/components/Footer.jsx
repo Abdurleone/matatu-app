@@ -1,12 +1,15 @@
-// src/components/Footer.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-100 mt-10 py-4">
-      <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-600">
-        <p>&copy; {new Date().getFullYear()} Mathree App | Version 1.0.0 | All rights reserved.</p>
+    <footer className="w-full p-4 bg-gray-900 text-center text-sm text-gray-400">
+      <div className="space-x-4">
+        <Link to="/contact" className="hover:underline">Contact</Link>
+        <Link to="/copyright" className="hover:underline">Copyright</Link>
+        <Link to="/license" className="hover:underline">License</Link>
       </div>
+      <p className="mt-2">© 2025 Mathree Management System</p>
     </footer>
   );
 };
