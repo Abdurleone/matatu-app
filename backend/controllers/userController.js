@@ -18,7 +18,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Password is required and should be a valid string' });
     }
 
-    // Check if a user already exists with the same email or membershipNo
+    // Check if a user already exists with the same email (for passengers) or membershipNo (for driver/conductor)
     const existingUser = await User.findOne({
       $or: [
         { email },
@@ -30,18 +30,20 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create and save the new user
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
+    // Create a new user
     const newUser = new User({
       username,
       email,
+      password,
       role,
       membershipNo,
-      password: hashedPassword,
     });
 
+    // Hash the password
+    const saltRounds = 10;
+    newUser.password = await bcrypt.hash(password, saltRounds);
+
+    // Save user to the database
     await newUser.save();
 
     res.status(201).json({
@@ -104,7 +106,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Reset password for locked accounts
+// Password reset (to be triggered when account is locked)
 const resetPassword = async (req, res) => {
   try {
     const { email, membershipNo, newPassword } = req.body;
@@ -123,8 +125,8 @@ const resetPassword = async (req, res) => {
     user.accountLocked = false;
     user.failedLoginAttempts = 0;
     user.lockUntil = null;
-    user.password = await bcrypt.hash(newPassword, 10);
 
+    user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
     res.status(200).json({ message: 'Password reset successful' });
@@ -134,18 +136,32 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// ✅ Get all users or filter by role/membershipNo
+// Get all users with optional filters, pagination, sorting
 const getAllUsers = async (req, res) => {
   try {
-    const { role, membershipNo } = req.query;
+    const { role, membershipNo, page = 1, limit = 10, sortBy = 'createdAt', order = 'desc' } = req.query;
 
     const filter = {};
     if (role) filter.role = role;
     if (membershipNo) filter.membershipNo = membershipNo;
+    filter.isActive = { $ne: false }; // Optional soft delete filter
 
-    const users = await User.find(filter).select('-password');
+    const sortOrder = order === 'asc' ? 1 : -1;
 
-    res.status(200).json({ users });
+    const users = await User.find(filter)
+      .select('-password')
+      .sort({ [sortBy]: sortOrder })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+
+    const totalUsers = await User.countDocuments(filter);
+
+    res.status(200).json({
+      users,
+      total: totalUsers,
+      page: parseInt(page),
+      totalPages: Math.ceil(totalUsers / limit),
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error while fetching users' });
