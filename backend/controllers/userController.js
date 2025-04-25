@@ -18,7 +18,7 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'Password is required and should be a valid string' });
     }
 
-    // Check if a user already exists with the same email (for passengers) or membershipNo (for driver/conductor)
+    // Check if a user already exists with the same email or membershipNo
     const existingUser = await User.findOne({
       $or: [
         { email },
@@ -30,20 +30,18 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create a new user
+    // Create and save the new user
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     const newUser = new User({
       username,
       email,
-      password,
       role,
       membershipNo,
+      password: hashedPassword,
     });
 
-    // Hash the password (ensure password is a string and salt rounds are correct)
-    const saltRounds = 10; // Set salt rounds here explicitly
-    newUser.password = await bcrypt.hash(password, saltRounds);
-
-    // Save user to the database
     await newUser.save();
 
     res.status(201).json({
@@ -65,7 +63,6 @@ const loginUser = async (req, res) => {
   try {
     const { membershipNo, email, password } = req.body;
 
-    // Check if account is locked due to too many failed login attempts
     const user = await User.findOne({
       $or: [
         { email },
@@ -81,19 +78,15 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Account locked due to multiple failed login attempts. Please reset your password.' });
     }
 
-    // Compare password
     const isPasswordMatch = await user.comparePassword(password);
 
     if (!isPasswordMatch) {
-      // Increment failed login attempts
       await user.incrementLoginAttempts();
       return res.status(400).json({ message: 'Invalid password' });
     }
 
-    // Reset login attempts after successful login
     await user.resetLoginAttempts();
 
-    // Generate JWT token for authenticated user
     const token = jwt.sign({ id: user._id, role: user.role }, 'your_jwt_secret', { expiresIn: '1h' });
 
     res.status(200).json({
@@ -111,7 +104,7 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Password reset (to be triggered when account is locked)
+// Reset password for locked accounts
 const resetPassword = async (req, res) => {
   try {
     const { email, membershipNo, newPassword } = req.body;
@@ -127,13 +120,11 @@ const resetPassword = async (req, res) => {
       return res.status(400).json({ message: 'User not found' });
     }
 
-    // Reset account lock and failed attempts
     user.accountLocked = false;
     user.failedLoginAttempts = 0;
     user.lockUntil = null;
-
-    // Hash the new password and update
     user.password = await bcrypt.hash(newPassword, 10);
+
     await user.save();
 
     res.status(200).json({ message: 'Password reset successful' });
@@ -143,9 +134,27 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// Export the controller functions
+// ✅ Get all users or filter by role/membershipNo
+const getAllUsers = async (req, res) => {
+  try {
+    const { role, membershipNo } = req.query;
+
+    const filter = {};
+    if (role) filter.role = role;
+    if (membershipNo) filter.membershipNo = membershipNo;
+
+    const users = await User.find(filter).select('-password');
+
+    res.status(200).json({ users });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error while fetching users' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   resetPassword,
+  getAllUsers,
 };
