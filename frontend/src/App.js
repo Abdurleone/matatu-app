@@ -6,7 +6,9 @@ import Footer from "./components/Footer.jsx";
 
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx"; // Import the Login component
-import MatatuDetailPage from "./pages/MatatuDetailPage";
+import MatatuDetailPage from "./pages/MatatuDetailPage.jsx";
+import DriverDashboard from "./pages/DriverDashboard.jsx";
+
 
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} /> {/* Add the login route */}
           <Route path="/matatu/:id" element={<MatatuDetailPage />} />
+          <Route path="/driver-dashboard" element={<DriverDashboard />} />
         </Routes>
         <Footer />
       </AuthProvider>

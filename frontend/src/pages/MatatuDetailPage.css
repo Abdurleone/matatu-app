@@ -1,0 +1,78 @@
+/* Full-page container with blended background */
+.matatu-details-container {
+  min-height: 100vh;
+  padding: 20px;
+  background: black url('../assets/logo.png') no-repeat center center;
+  background-size: cover;
+  position: relative;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+/* Overlay to blend the logo with the background */
+.matatu-details-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Black overlay with 50% opacity */
+  z-index: 1;
+}
+
+/* Content styling */
+.matatu-header,
+.matatu-info,
+.driver-info {
+  position: relative;
+  z-index: 2; /* Ensure content is above the overlay */
+  background-color: rgba(26, 26, 26, 0.9); /* Slightly transparent background */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
+}
+
+/* Header styling */
+.matatu-header {
+  text-align: center;
+}
+
+.matatu-header h1 {
+  font-size: 2rem;
+  color: #4caf50;
+}
+
+.matatu-header p {
+  font-size: 1rem;
+  color: #b3b3b3;
+}
+
+/* Information sections */
+.matatu-info h2,
+.driver-info h2 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #4caf50;
+}
+
+.matatu-info ul,
+.driver-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.matatu-info li,
+.driver-info li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: white;
+}
+
+/* Loading message styling */
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #4caf50;
+}
