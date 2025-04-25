@@ -27,8 +27,8 @@ function App() {
 // Component to conditionally render Navbar
 const ConditionalNavbar = () => {
   const location = useLocation();
-  // Hide Navbar on the home page ("/")
-  if (location.pathname === "/") {
+  // Hide Navbar on the home page ("/") and login page ("/login")
+  if (location.pathname === "/" || location.pathname === "/login") {
     return null;
   }
   return <Navbar />;
