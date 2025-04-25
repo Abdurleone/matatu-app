@@ -9,7 +9,6 @@ const Footer = () => {
         <Link to="/copyright" className="hover:underline">Copyright</Link>
         <Link to="/license" className="hover:underline">License</Link>
       </div>
-      <p className="mt-2">© 2025 Mathree Management System</p>
     </footer>
   );
 };
