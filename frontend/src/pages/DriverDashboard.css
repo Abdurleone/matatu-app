@@ -1,53 +1,43 @@
-/* Seat arrangement section */
-.seat-arrangement {
-    margin-top: 30px;
-    background-color: rgba(26, 26, 26, 0.9);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .seat-arrangement h2 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #4caf50;
-  }
-  
-  /* Grid layout for seats */
-  .seats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 seats per row */
-    gap: 10px;
-    margin-top: 20px;
-  }
-  
-  /* Individual seat styling */
-  .seat {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-  }
-  
-  /* Vacant seat styling */
-  .seat.vacant {
-    background-color: #4caf50; /* Green for vacant seats */
-  }
-  
-  /* Booked seat styling */
-  .seat.booked {
-    background-color: #ff0000; /* Red for booked seats */
-  }
-  
-  /* Hover effect */
-  .seat:hover {
-    transform: scale(1.1);
-    opacity: 0.9;
-  }
+.dashboard-container {
+  padding: 20px;
+  color: #fff;
+  background-color: #1e1e1e;
+  min-height: 100vh;
+}
+
+.vehicle-details,
+.trip-management,
+.seat-arrangement,
+.passenger-list {
+  margin-bottom: 30px;
+}
+
+.seats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  max-width: 600px;
+  margin-top: 20px;
+}
+
+.seat {
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-align: center;
+  border: 1px solid #444;
+}
+
+.vacant {
+  background-color: #c8e6c9;
+}
+
+.booked {
+  background-color: #2196f3;
+  color: white;
+}
+
+.unavailable {
+  background-color: #9e9e9e;
+  color: white;
+}

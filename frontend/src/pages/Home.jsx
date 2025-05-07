@@ -1,19 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import PageLayout from '../components/PageLayout.jsx'; // Import the reusable layout component
+import Logo from '../assets/logo.png';
+import './Home.css'; // Import the CSS file
+
 const Home = () => {
   return (
-    <PageLayout>
+    <div className="home-container">
       {/* Logo Section */}
-      <div className="home-container">
-        <Link to="/login">
-          <img 
-            src="../assets/logo.png" 
-            alt="Mathree Logo" 
-            className="home-logo"
-          />
-        </Link>
-      </div>
+      <Link to="/login">
+        <img 
+          src={Logo} 
+          alt="Mathree Logo" 
+          className="home-logo"
+        />
+      </Link>
 
       {/* Footer Section */}
       <footer className="home-footer">
@@ -24,7 +24,7 @@ const Home = () => {
         </div>
         <p>© 2025 Mathree Management System</p>
       </footer>
-    </PageLayout>
+    </div>
   );
 };
 
